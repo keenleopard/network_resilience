@@ -22,6 +22,25 @@ class InterER(nx.Graph):
 
         nx.Graph.__init__(self, nx.disjoint_union(self.Ga, self.Gb))
 
+
+    def one2one (self):
+        """
+        one to one connection between two sub networks.
+        """
         for i in range(n):
             self.add_edge(i, n+i)
+
+    def fail (self, subnet='a', Q=1):
+        """
+        remove Q nodes in one sub network randomly
+        Q=1: number of nodes to be removed.
+        subnet='a', specify which subnetwork. a/b
+        """
+
+    def attack (self, subnet='a', Q=1):
+        """
+        remove Q mostly connected nodes in one subnetwork.
+        Q=1: number of nodes to be removed.
+        subnet='a', specify which subnetwork. a/b
+        """
 
