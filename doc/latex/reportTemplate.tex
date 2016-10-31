@@ -61,7 +61,10 @@
 
 \end{center}
 \newpage
-
+\abstract
+\subsubsection{Outline}
+aaa
+\newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
@@ -80,26 +83,62 @@
 
 
 
-\section{Abstract}
 
 \section{Individual contributions}
+\subsubsection{Outline}
 
 \section{Introduction and Motivations}
-
-\section{Description of the Model}
-
-\section{Implementation}
-
-\section{Simulation Results and Discussion}
-
+\subsubsection{Outline}
+In a more interconnected and globalised world, the task to create resilient networks bla bla...
+\section{Base knowledge} 
+\subsubsection{Outline}
+Most of this section should be finished in Week 1-2. Here we'll introduce several objects, methods and metrics, which will be used during the whole project. We want to be clear and stay consistent, thus we need to define them at some point in our work.
+\subsection{Graph Types}
+\subsubsection{Outline}
+We'll have a look what graph types exists in relevance to our project, such as exponential network, small world, scale free network, coupled networks, and have a look how they can be generated (such as Erdos algorithm or Barbasi algorithm). We'll include python/matlab/java/pseudocode or formulas for the generation of the different types.
+\subsection{Metrics}
+\subsubsection{Outline}
+We'll define several metrics, how we can measure the robustness, resilience, etc. (and define those terms) of a graph, such as k-shell, depth, unique robustness measure for networks,... \\
+We'll also define what an attack and a failure is, and how we can simulate them (e.g. selecting specific nodes, edges,... This does not need an own subsection)
+\subsection{Eccentricity}
+The eccentricity is the maximum distance from a given node to every other node in the graph. 
+\subsubsection{Interconnectedness}
+The diameter $d$ of a graph is the maximum eccentricity of any node. Interconnectedness, or diameter, is therefore the average length information has to travel in the graph.\cite{albert2000error} 
+\section{Static Analysis} %%Week 2-3
+\subsubsection{Outline}
+We will do a static (no flow simulation) analysis, which means that we analyse the networks resilience in case of failure or attacks. This can easily be done with the help of the python framework. It should be finished in Week 2-3 (as it goes hand in hand with part 1, and is simply an implementation of all the definitions).
+\subsection{Vulnerability of the different networks}
+\subsubsection{Outline}
+We generate the networks from section 1, and analyse their vulnerability based on the metrics from section 1. As we have defined the generation algorithms and the metrics in section 1, they can easily be implemented.
+\subsection{Improvement of networks}
+\subsubsection{Outline}
+We try several methods to improve the networks by e.g. adding links or nodes, switching edges,... (reproduction of papers)
+\section{Dynamic Flow Analysis} %%Week 4&5&6&7
+\subsubsection{Outline}
+This is our main part. It'll be done in week 4-7. We focus our work on power grids. Here, we will not work with generated networks, as they miss important information (such as max. voltage loads) needed to simulate cascading failures. We therefore rely on empirical data, which already contains all those information. We might, however, create coupled networks based on several real world networks (e.g. coupling two countries, or coupling the north with the south of a country).
+For the flow analysis, we'll mainly use the SFINA framework. 
+\subsection{Cascading failure Metrics}
+\subsubsection{Outline}
+We define cascading failure in networks, and define different metrics needed, which are specific for power grids, and/or coupled networks. (if there are different ones, than in the 1. section)
+\subsection{Singular Networks}
+\subsubsection{Outline}
+We analyse cascading failure on singular networks(such as the network of a single country).
+\subsection{Improvement}
+\subsubsection{Outline}
+We'll show several methods to improve the failure tolerance (paper reproduction) and measure their efficiency.
+\subsection{Coupled Networks}
+\subsubsection{Outline}
+We analyse cascading failure on coupled networks, and look what coupling mechanisms (choosing random nodes, choosing good connected nodes?) are the best to not weaken, or maybe even strengthen the whole network
 \section{Summary and Outlook}
-
+\subsubsection{Outline}
+We learned bla bla and our results can be used to improve bla bla...
+\section{Acknowledgement}
+\subsubsection{Outline}
+We thank Olivia and Evangelos for their outstanding support
 \section{References}
-
-
-
-
-
+\nocite{*}
+\bibliographystyle{unsrt}
+\bibliography{reference}
 
 \end{document}  
 
