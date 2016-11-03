@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.17 (TeX Live 2016) (preloaded format=pdflatex 2016.10.17)  31 OCT 2016 11:24
+This is pdfTeX, Version 3.14159265-2.6-1.40.17 (TeX Live 2016) (preloaded format=pdflatex 2016.10.17)  31 OCT 2016 17:54
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -273,7 +273,7 @@ Package epstopdf Info: Source file: <ETHlogo.eps>
 (epstopdf)                    date: 2016-10-19 16:38:48
 (epstopdf)                    size: 179075 bytes
 (epstopdf)             Output file: <ETHlogo-eps-converted-to.pdf>
-(epstopdf)                    date: 2016-10-27 09:25:35
+(epstopdf)                    date: 2016-10-31 17:30:51
 (epstopdf)                    size: 14362 bytes
 (epstopdf)             Command: <repstopdf --outfile=ETHlogo-eps-converted-to.p
 df ETHlogo.eps>
@@ -324,7 +324,7 @@ fonts/cm/cmr10.pfb></usr/local/texlive/2016/texmf-dist/fonts/type1/public/amsfo
 nts/cm/cmr12.pfb></usr/local/texlive/2016/texmf-dist/fonts/type1/public/amsfont
 s/cm/cmr17.pfb></usr/local/texlive/2016/texmf-dist/fonts/type1/public/amsfonts/
 cm/cmti10.pfb>
-Output written on reportTemplate.pdf (7 pages, 119421 bytes).
+Output written on reportTemplate.pdf (7 pages, 119232 bytes).
 PDF statistics:
  59 PDF objects out of 1000 (max. 8388607)
  41 compressed objects within 1 object stream
