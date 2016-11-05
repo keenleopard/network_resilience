@@ -89,20 +89,31 @@ class InterER(nx.Graph):
         else:
             return False
 
-    def step (self):
+    def step (self, subnet):
         """
         Each step in cascading failure.
+        Remove edges in the subnet connecting nodes in different clusters
+        in the other subnet.
         """
 
-    def cascade (self, removed_nodes=None):
+    def cascade (self, init_subnet='a'):
         """
         Iterative process for cascading failure.
+        During this, even steps are to remove edges in subnet a;
+        odd steps are to remove edges in subnet b.
 
-        removed_nodes: initially removed nodes due to failure or attack
+        init_subnet: initially failing nodes
         """
-        if removed_nodes is not None:
-            while (not self.is_mutually_connected):
-                self.step()
+        if init_subnet == 'a':
+            count = 1
+        elif init__subnet == 'b':
+            count = 0
+        else:
+            print("error in initial removal")
+
+        while (not self.is_mutually_connected):
+            self.step(chr(97 + (count % 2 != 0))) #even count for a, odd count for b
+            count += 1
 
 
 
