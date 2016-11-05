@@ -134,7 +134,7 @@ class InterER(nx.Graph):
 
         while (not self.is_mutually_connected):
             self.step(chr(97 + (count % 2 != 0))) #even count for a, odd count for b
-            print(count)
+            #print(count)
             count += 1
 
     @property
@@ -144,7 +144,7 @@ class InterER(nx.Graph):
         """
         if self.is_mutually_connected:
             clusters = sorted(self.clusters_a, key = lambda cluster: -len(cluster))
-            fraction = len(clusters[0]) / self.n
+            fraction = len(clusters[0]) / nx.number_of_nodes(self.Ga)
             return fraction
         else:
             print("not mutually connected yet")
