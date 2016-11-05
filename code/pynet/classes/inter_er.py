@@ -137,5 +137,18 @@ class InterER(nx.Graph):
             print(count)
             count += 1
 
+    @property
+    def frac_lmcc(self):
+        """
+        fraction of No. nodes in the Largest Mutually Connected Component (lMCC).
+        """
+        if self.is_mutually_connected:
+            clusters = sorted(self.clusters_a, key = lambda cluster: -len(cluster))
+            fraction = len(clusters[0]) / self.n
+            return fraction
+        else:
+            print("not mutually connected yet")
+
+
 
 
