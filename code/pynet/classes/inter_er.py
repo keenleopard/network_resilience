@@ -95,6 +95,27 @@ class InterER(nx.Graph):
         Remove edges in the subnet connecting nodes in different clusters
         in the other subnet.
         """
+        allowed_cluster = None
+        if subnet == 'b':
+            for node in self.Gb.nodes():
+                for cluster in self.clusters_a:
+                    if (node in cluster): allowed_neighbors = cluster
+                for neighbor in self.Gb.neighbors(node):
+                    if (neighbor not in allowed_neighbors):
+                        self.remove_edge(node+self.n, neighbor+self.n)
+                        self.Gb.remove_edge(node, neighbor)
+
+        elif subnet == 'a':
+            for node in self.Ga.nodes():
+                for cluster in self.clusters_b:
+                    if (node in cluster): allowed_neighbors = cluster
+                for neighbor in self.Ga.neighbors(node):
+                    if (neighbor not in allowed_neighbors):
+                        self.remove_edge(node, neighbor)
+                        self.Ga.remove_edge(node, neighbor)
+        else:
+            print("error in step subnet")
+
 
     def cascade (self, init_subnet='a'):
         """
@@ -113,6 +134,7 @@ class InterER(nx.Graph):
 
         while (not self.is_mutually_connected):
             self.step(chr(97 + (count % 2 != 0))) #even count for a, odd count for b
+            print(count)
             count += 1
 
 
