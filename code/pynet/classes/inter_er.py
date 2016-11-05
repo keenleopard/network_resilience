@@ -123,7 +123,7 @@ class InterER(nx.Graph):
         During this, even steps are to remove edges in subnet a;
         odd steps are to remove edges in subnet b.
 
-        init_subnet: initially failing nodes
+        init_subnet: initially failing subnet
         """
         if init_subnet == 'a':
             count = 1
