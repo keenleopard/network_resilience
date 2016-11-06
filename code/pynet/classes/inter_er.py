@@ -23,8 +23,8 @@ class InterER(nx.Graph):
         self.Gb = nx.fast_gnp_random_graph(n, pb)
         #self.Ga = nx.path_graph(n)
         #self.Gb = nx.path_graph(n)
-
-        nx.Graph.__init__(self, nx.disjoint_union(self.Ga, self.Gb))
+        
+        #nx.Graph.__init__(self, nx.disjoint_union(self.Ga, self.Gb)) // not really have the connected big graph
 
 
     def one2one (self):
@@ -40,38 +40,43 @@ class InterER(nx.Graph):
         """
         if nodelist is not None:
             if subnet == 'a':
-                self.remove_nodes_from(nodelist)
+                #self.remove_nodes_from(nodelist)
                 self.Ga.remove_nodes_from(nodelist)
             if subnet == 'b':
-                self.remove_nodes_from(nodelist + self.n)
+                #self.remove_nodes_from(nodelist + self.n)
                 self.Gb.remove_nodes_from(nodelist)
-
-    def fail (self, subnet='a', Q=1):
+                
+    def attack_random (self, subnet='a', Q=1):
         """
         remove Q nodes in one sub network randomly
         Q=1: number of nodes to be removed. (<= self.n)
         subnet='a', specify which subnetwork. (a/b)
         """
-        failed_nodes = np.array(random.sample(range(self.n), Q))
-        self.remove(subnet, failed_nodes)
-        if subnet == 'a':
-            self.remove('b', failed_nodes)
-        elif subnet == 'b':
-            self.remove('a', failed_nodes)
+        if Q > self.n :
+            print("error in removed number of nodes")
         else:
-            print("error in subnet")
+            failed_nodes = np.array(random.sample(range(self.n), Q))
+            self.remove(subnet, failed_nodes) # remove the failed nodes of the selected subnet
+            if subnet == 'a':
+                self.remove('b', failed_nodes) # due to the one to one mapping, remove the correponding nodes of the other subnet
+            elif subnet == 'b':
+                self.remove('a', failed_nodes)
+            else:
+                print("error in subnet")
         return failed_nodes
-
-    def attack (self, subnet='a', Q=1):
+    
+    def attack_crucial (self, subnet='a', Q=1):
         """
         remove Q mostly connected nodes in one subnetwork.
         Q=1: number of nodes to be removed.
         subnet='a', specify which subnetwork. a/b
         """
-        descending_order = sorted(G.nodes(), key = lambda i: -G.degree(i))
-        attacked_ndoes = np.array(descending_order[:Q])
+        descending_order = sorted(G.nodes(), key = lambda i: -G.degree(i)) # getting node list from most degree to least degree
+        attacked_nodes = np.array(descending_order[:Q])
         self.remove(subnet, attacked_nodes)
         return attacked_nodes
+    
+
 
     @property
     def is_mutually_connected (self):
