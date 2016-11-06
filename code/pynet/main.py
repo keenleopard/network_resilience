@@ -8,19 +8,27 @@ from classes import InterER
 def main():
     N = 4000
     k_avg = 4
+    rep = 10
 
     with open('frac_lmcc.dat', 'w') as f:
         f.write('# p*<k>\t frac_lmcc\n')
+        count = 0
         for p in np.linspace(0.59, 0.63, num=100):
-            G = InterER(N,k_avg,k_avg)
-            G.one2one()
-
+            count += 1
+            print(count)
+            fraction_list = []
             to_be_removed = int(N * (1-p))
-            G.fail(Q=to_be_removed)
-            G.cascade()
-            print(nx.number_of_nodes(G.Ga))
-            f.write(str(p*k_avg) + '\t{0.frac_lmcc}\n'.format(G))
 
+            for i in range(rep):
+                G = InterER(N,k_avg,k_avg)
+                G.one2one()
+                G.fail(Q=to_be_removed)
+                G.cascade()
+                fraction_list.append(G.frac_lmcc)
+            f.write(str(round(p*k_avg, 4))
+                    + '\t'
+                    + '\t'.join(str(round(x, 4)) for x in fraction_list)
+                    + '\n')
 
 if __name__ == "__main__":
     main()
