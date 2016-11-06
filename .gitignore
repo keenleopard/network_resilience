@@ -37,4 +37,4 @@ __pycache__/
 
 #self defined
 test/
-.dat
+*.dat
