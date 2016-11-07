@@ -57,12 +57,12 @@ class InterER(nx.Graph):
         else:
             failed_nodes = np.array(random.sample(range(self.n), Q))
             self.remove(subnet, failed_nodes) # remove the failed nodes of the selected subnet
-            if subnet == 'a':
-                self.remove('b', failed_nodes) # due to the one to one mapping, remove the correponding nodes of the other subnet
-            elif subnet == 'b':
-                self.remove('a', failed_nodes)
-            else:
-                print("error in subnet")
+            #if subnet == 'a':
+                #self.remove('b', failed_nodes) # due to the one to one mapping, remove the correponding nodes of the other subnet
+            #elif subnet == 'b':
+                #self.remove('a', failed_nodes)
+            #else:
+                #print("error in subnet")
         return failed_nodes
     
     def attack_crucial (self, subnet='a', Q=1):
@@ -76,7 +76,16 @@ class InterER(nx.Graph):
         self.remove(subnet, attacked_nodes)
         return attacked_nodes
     
-
+    def remove_corresp (self, subnet='a', failed_nodes)
+        """
+        due to the one to one mapping, remove the correponding nodes of the other subnet
+        """
+        if subnet == 'a':
+            self.remove('b', failed_nodes) 
+        elif subnet == 'b':
+            self.remove('a', failed_nodes)
+        else:
+            print("error in subnet")
 
     @property
     def is_mutually_connected (self):
@@ -102,29 +111,35 @@ class InterER(nx.Graph):
         """
         allowed_cluster = None
         if subnet == 'b':
-            for node in self.Gb.nodes():
+            for node in self.Gb.nodes(): # choose one node in B
                 for cluster in self.clusters_a:
-                    if (node in cluster): allowed_neighbors = cluster
+                    if (node in cluster): 
+                        allowed_neighbors = cluster # find the cluster in A that this B node connects to
+                        break # once found, break the loop
                 for neighbor in self.Gb.neighbors(node):
                     if (neighbor not in allowed_neighbors):
-                        self.remove_edge(node+self.n, neighbor+self.n)
+                        #self.remove_edge(node+self.n, neighbor+self.n)
                         self.Gb.remove_edge(node, neighbor)
+                        break # as long as there is one out of the cluster, break the loop
 
         elif subnet == 'a':
             for node in self.Ga.nodes():
                 for cluster in self.clusters_b:
-                    if (node in cluster): allowed_neighbors = cluster
+                    if (node in cluster): 
+                        allowed_neighbors = cluster
+                        break
                 for neighbor in self.Ga.neighbors(node):
                     if (neighbor not in allowed_neighbors):
-                        self.remove_edge(node, neighbor)
+                        #self.remove_edge(node, neighbor)
                         self.Ga.remove_edge(node, neighbor)
+                        break
         else:
             print("error in step subnet")
 
 
     def cascade (self, init_subnet='a'):
         """
-        Iterative process for cascading failure.
+        Iterative process for cascading failure. # not contain the initial attack part, only the remove edges part
         During this, even steps are to remove edges in subnet a;
         odd steps are to remove edges in subnet b.
 
@@ -132,7 +147,7 @@ class InterER(nx.Graph):
         """
         if init_subnet == 'a':
             count = 1
-        elif init__subnet == 'b':
+        elif init_subnet == 'b':
             count = 0
         else:
             print("error in initial removal")
@@ -145,7 +160,7 @@ class InterER(nx.Graph):
     @property
     def frac_lmcc(self):
         """
-        fraction of No. nodes in the Largest Mutually Connected Component (lMCC).
+        fraction of No. nodes in the Largest Mutually Connected Component (LMCC).
         """
         if self.is_mutually_connected:
             clusters = sorted(self.clusters_a, key = lambda cluster: -len(cluster))
