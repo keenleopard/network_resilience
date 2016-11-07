@@ -93,8 +93,8 @@ public class Utilities {
     private void copyNode(Graph sourceGraph, Graph targetGraph, String identifier){
         int i = 0;
         for (Node n:sourceGraph.getEachNode()){
-            targetGraph.addNode(identifier+i);
-            targetGraph.getNode(identifier+i).addAttribute("ui.class",identifier);
+            targetGraph.addNode(identifier+n.getId());
+            targetGraph.getNode(identifier+n.getId()).addAttribute("ui.class",identifier);
             i++;
         }
     }
