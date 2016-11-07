@@ -3,12 +3,16 @@ from __future__ import division, print_function
 import networkx as nx
 import matplotlib.pyplot as plt
 import numpy as np
+import copy
+
+
 from classes import InterER
 
 def main():
-    N = 4000
+    N = 400
     k_avg = 4
-    rep = 10
+    rep = 1
+    G0 = InterER(N,k_avg,k_avg)
 
     with open('frac_lmcc.dat', 'w') as f:
         f.write('# p*<k>\t frac_lmcc\n')
@@ -20,7 +24,7 @@ def main():
             to_be_removed = int(N * (1-p))
 
             for i in range(rep):
-                G = InterER(N,k_avg,k_avg)
+                G = copy.deepcopy(G0)
                 G.one2one()
                 G.fail(Q=to_be_removed)
                 G.cascade()
