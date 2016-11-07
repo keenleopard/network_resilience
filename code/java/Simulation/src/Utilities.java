@@ -1,6 +1,4 @@
-import org.graphstream.algorithm.generator.BarabasiAlbertGenerator;
-import org.graphstream.algorithm.generator.Generator;
-import org.graphstream.algorithm.generator.GridGenerator;
+import org.graphstream.algorithm.generator.*;
 import org.graphstream.graph.*;
 import org.graphstream.graph.implementations.*;
 
@@ -58,7 +56,7 @@ public class Utilities {
      */
     protected Graph scaleFree(String identifier, int degree, int nodes){
         Graph graph = new SingleGraph(identifier);
-        Generator gen = new GridGenerator();
+        Generator gen = new BarabasiAlbertGenerator(degree);
         gen.addSink(graph);
         gen.begin();
         for(int i=0; i<nodes; i++){
@@ -80,7 +78,7 @@ public class Utilities {
         copyNode(graphA,inter,"A");
         copyNode(graphB,inter,"B");
         copyEdge(graphA,inter,"A");
-        //copyEdge(graphB,inter,"B");
+        copyEdge(graphB,inter,"B");
 
 
         return inter;
