@@ -4,17 +4,20 @@ import networkx as nx
 import matplotlib.pyplot as plt
 import numpy as np
 import copy
+import time
 
 
 from classes import InterER
 
+wdir = 'data'
 def main():
     N = 400
     k_avg = 4
     rep = 1
-    G0 = InterER(N,k_avg,k_avg)
+    G0 = InterER(N, k_avg, k_avg)
 
-    with open('frac_lmcc.dat', 'w') as f:
+    with open('{0}/N{1}_kavg{2}_rep{3}.dat'.format(wdir, N, k_avg, rep), 'w') as f:
+        f.write('# created on %s\n' %time.strftime("%H:%M\t%d/%m/%Y"))
         f.write('# p*<k>\t frac_lmcc\n')
         count = 0
         for p in np.linspace(0.59, 0.63, num=100):
