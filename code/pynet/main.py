@@ -12,7 +12,7 @@ def main():
     with open('frac_lmcc.dat', 'w') as f:
         f.write('# p\t frac_lmcc\n')
         for p in np.linspace(0.59, 0.63, num=100):
-            k = N*p # !!!
+            k = int(N*p) # !!!
             G = InterER(N,k,k)
             G.one2one()
 
