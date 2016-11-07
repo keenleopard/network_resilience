@@ -16,7 +16,9 @@ def main():
             G.one2one()
 
             to_be_removed = int(N * (1-p))
-            G.fail(Q=to_be_removed)
+            #G.fail(Q=to_be_removed)
+            # initial attack subnetwork a
+            G.remove_corresp(G.attack_random(Q=to_be_removed))
             G.cascade()
             print(nx.number_of_nodes(G.Ga))
             f.write(str(p) + '\t{0.frac_lmcc}\n'.format(G))
