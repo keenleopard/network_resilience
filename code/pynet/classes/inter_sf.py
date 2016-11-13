@@ -5,20 +5,29 @@ import numpy as np
 import matplotlib.pyplot as plt
 import random
 
+def scale_free_powerlaw(n = 4000, lam = 3, k_avg = 4) :
+    """
+    n : number of nodes
+    lam : exponent
+    """
+    noftries = n ** 2
+    standard = k_avg + 0.5
+    ratio = standard / np.mean(s)
+
+    while (1) :
+        s = nx.utils.powerlaw_sequence(n, lam)
+        for i in range(len(s)) :
+            s[i] = int(ratio * s[i])
+        if (nx.is_valid_degree_sequence(s)) :
+	    #G = nx.configuration_model(s) this would generate a lot of self-loops
+	    G = nx.random_degree_sequence_graph(s, tries = noftries)
+            break
+    return G
+
 class InterSF(Inter_Network):
 
-    def __init__(self, lam = 3)
-        """
-        n: number of nodes of each sub network
-        ka, kb: average degree of network a, b
-        all parameters already defined in the base class inter_Network
-        """
-
-        #self.Ga = nx.scale_free_graph(self.n, pa)
-	self.Ga = nx.random_powerlaw_tree(self.n, lam)
-	# random_powerlaw_tree(n, gamma=3, seed=None, tries=100) with gamma (float) – Exponent of the power law ; tries (int) – Number of attempts to adjust the sequence to make it a tree.
-        self.Gb = nx.fast_gnp_random_graph(self.n, lam)
-        
-        #nx.Graph.__init__(self, nx.disjoint_union(self.Ga, self.Gb)) // not really have the connected big graph
+    def __init__(self, lam = 3) :
+        self.Ga = scale_free_powerlaw(self.n, lam, self.ka)
+        self.Gb = scale_free_powerlaw(self.n, lam, self.kb)
 
 
