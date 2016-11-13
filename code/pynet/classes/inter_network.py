@@ -7,6 +7,7 @@ import random
 
 class Inter_Network(nx.Graph):
 
+
     def __init__(self, n, ka, kb):
         """
         n: number of nodes of each sub network
@@ -76,7 +77,7 @@ class Inter_Network(nx.Graph):
         self.remove(subnet, attacked_nodes)
         return attacked_nodes
     
-    def remove_corresp (self, subnet='a', failed_nodes)
+    def remove_corresp (self, failed_nodes, subnet='a'):
         """
         due to the one to one mapping, remove the correponding nodes of the other subnet
         """

@@ -4,25 +4,24 @@ import networkx as nx
 import numpy as np
 import matplotlib.pyplot as plt
 import random
-
+from .inter_network import Inter_Network
 class InterER(Inter_Network):
 
-    #def __init__(self, n, ka, kb):
-    def __init__(self)
+    def __init__(self, n, ka, kb) :
         """
         n: number of nodes of each sub network
         ka, kb: average degree of network a, b
-        all parameters already defined in the base class inter_Network
+      
         """
-        #self.n = n
-        #self.ka = ka
-        #self.kb = kb
+        self.n = n
+        self.ka = ka
+        self.kb = kb
 
         pa = self.ka / self.n
         pb = self.kb / self.n
 
-        self.Ga = nx.fast_gnp_random_graph(self.n, pa)
-        self.Gb = nx.fast_gnp_random_graph(self.n, pb)
+        self.Ga = nx.fast_gnp_random_graph(n, pa)
+        self.Gb = nx.fast_gnp_random_graph(n, pb)
         #self.Ga = nx.path_graph(n)
         #self.Gb = nx.path_graph(n)
         
