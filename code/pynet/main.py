@@ -3,14 +3,21 @@ from __future__ import division, print_function
 import networkx as nx
 import matplotlib.pyplot as plt
 import numpy as np
+import copy
+import time
+
+
 from classes import InterER
 
+wdir = 'data'
 def main():
-    N = 4000
+    N = 400
     k_avg = 4
-    rep = 10
+    rep = 1
+    G0 = InterER(N, k_avg, k_avg)
 
-    with open('frac_lmcc.dat', 'w') as f:
+    with open('{0}/N{1}_kavg{2}_rep{3}.dat'.format(wdir, N, k_avg, rep), 'w') as f:
+        f.write('# created on %s\n' %time.strftime("%H:%M\t%d/%m/%Y"))
         f.write('# p*<k>\t frac_lmcc\n')
         count = 0
         for p in np.linspace(0.59, 0.63, num=100):
@@ -20,7 +27,7 @@ def main():
             to_be_removed = int(N * (1-p))
 
             for i in range(rep):
-                G = InterER(N,k_avg,k_avg)
+                G = copy.deepcopy(G0)
                 G.one2one()
                 G.fail(Q=to_be_removed)
                 G.cascade()
