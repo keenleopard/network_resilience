@@ -10,7 +10,7 @@ def scale_free_powerlaw(n = 4000, lam = 3, k_avg = 4) :
     n : number of nodes
     lam : exponent
     """
-    noftries = n ** 2
+    noftries = 100000
     standard = k_avg + 0.5
     
     while (1) :
@@ -30,7 +30,7 @@ class InterSF(Inter_Network):
         self.n = n
         self.ka = ka
         self.kb = kb
-        self.Ga = scale_free_powerlaw(self.n, lam, self.ka)
-        self.Gb = scale_free_powerlaw(self.n, lam, self.kb)
+        self.Ga = scale_free_powerlaw(n, lam, ka)
+        self.Gb = scale_free_powerlaw(n, lam, kb)
 
 
