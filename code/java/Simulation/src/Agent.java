@@ -25,8 +25,9 @@ public class Agent {
     protected void init(Graph graph, String identifierA, String identifierB){
         ArrayList<Integer> random = generateUniqueRandomNumber(graph.getNodeCount()/2);
         //remove
-        for (int i = 0; i < 10; i++){
+        for (int i = 0; i < 5; i++){
             Edge connection = graph.getEdge("ABL"+random.get(i));
+            System.out.println("REMOVED: " + connection.getTargetNode() + " --- " + connection.getSourceNode());
             graph.removeNode(connection.getTargetNode().getId());
             graph.removeNode(connection.getSourceNode().getId());
         }
@@ -53,28 +54,67 @@ public class Agent {
      * @param identifierB the second, connected network which should have single clusters
      * @return true if edges got removed, else false
      */
+
     protected boolean removeSingleClusterLink(Graph graph, String identifierA, String identifierB){
         boolean working = false;
-        for (Node n:graph.getEachNode()){
-            //check if we're part of the subnetwork identifierA
-            if (n.getId().contains(identifierA)){
-                //get all the edges of this node, and check for the ABL edge, to find the corresponding node in identifierB
-                for(Edge e:n.getEachEdge()){
 
-                    //if we found the edge connecting the two subnetworks
-                    if (e!= null && e.getId().contains("ABL")){
-                        //we now check, if the identifierB node has only a single edge
-                        Node target = e.getTargetNode();
-                        Collection coll = target.getEdgeSet();
-                        //if there is only one edge, i.e. the ABL edge
-                        if (coll.size() == 1){
-                            //we remove all the edges except the ABL edge from the node n, our initial node
-                            for (Edge edges:n.getEachEdge()){
-                                if (edges != null && !edges.getId().contains("ABL")) {
-                                    graph.removeEdge(edges);
-                                    working = true;
-                                }
-                            }
+        //remove old cluster classifiers and generate new ones
+        utils.removeSpecificAttribute(graph,"cluster");
+        for (int i = 0; i < graph.getNodeCount(); i++) {
+            //utils.specifyClusters(graph.getNode(i),i,identifierA);
+            System.out.print("Cluster: " + i + ": ");
+            utils.dfsClustering(graph.getNode(i), i, identifierA);
+            System.out.println();
+        }
+
+
+        for (Node n:graph.getEachNode()){
+            String clusterA;
+            //get every Node B
+            if (n.getId().contains(identifierB)){
+                //find the ABL link to get the cluster of A
+                Edge ABL = utils.getABL(n);
+                Node targetA;
+                //select the node from the other subnetwork
+                if (ABL.getTargetNode() == n)
+                   targetA = ABL.getSourceNode();
+                else
+                    targetA = ABL.getTargetNode();
+
+                clusterA = targetA.getAttribute("cluster");
+
+                System.out.println(n + " is connected to " + targetA + " which is in cluster" + clusterA);
+
+                //get every Node connected to this B node and check if connects to the same cluster
+                for (Edge e:n.getEachEdge()){
+                    //get every Node, which is in the same subgraph
+                    if (e != null && !e.getId().contains("ABL")){
+                        Node target; //this node is connected to our node B
+                        //System.out.println(identifierB + " - " + n.getId());
+
+                        if (e.getTargetNode() == n)
+                            target = e.getSourceNode();
+                        else
+                            target = e.getTargetNode();
+                        //System.out.println("works");
+                        //check if this is connected to the same cluster in A
+                        //get the corresponding A node
+                        Edge ABL2 = utils.getABL(target);
+                        Node tmp;
+                        if (ABL2.getTargetNode() == target)
+                            tmp = ABL2.getSourceNode();
+                        else
+                            tmp = ABL2.getTargetNode();
+
+                        //System.out.println(n + " is connected to " + target + " which is connected to " + tmp);
+
+                        if (clusterA.compareTo(tmp.getAttribute("cluster")) < 0){
+                            working = true;
+                            graph.removeEdge(e);
+                            System.out.println("Removing edge between " + n + " and " + target + " because cluster " + clusterA + " is not " +  tmp.getAttribute("cluster"));
+                            //System.out.println(tmp.getAttribute("cluster") + " --- " + clusterA);
+                        }else{
+                            System.out.println(" NOT Removing edge between " + n + " and " + target + " because cluster " + clusterA + " is " +  tmp.getAttribute("cluster"));
                         }
                     }
                 }
@@ -82,6 +122,4 @@ public class Agent {
         }
         return working;
     }
-
-
 }

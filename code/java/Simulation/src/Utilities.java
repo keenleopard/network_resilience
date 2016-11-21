@@ -2,6 +2,7 @@ import org.graphstream.algorithm.generator.*;
 import org.graphstream.graph.*;
 import org.graphstream.graph.implementations.*;
 
+import java.util.Iterator;
 import java.util.Random;
 
 /**
@@ -95,9 +96,12 @@ public class Utilities {
         for (Node n:sourceGraph.getEachNode()){
             targetGraph.addNode(identifier+n.getId());
             targetGraph.getNode(identifier+n.getId()).addAttribute("ui.class",identifier);
+            targetGraph.getNode(identifier+n.getId()).addAttribute("ui.label",identifier+n.getId());
+            //targetGraph.getNode(identifier+n.getId()).addAttribute("ui.style","fill-color: rgb(0,"+ i*37 % 255+ ","+ i*29 % 255+");");
             i++;
         }
     }
+
     /**
      * Helper class to copy all the edges from sourceGraph to targetGraph, and they are identified as identifieri with i a number
      * @param sourceGraph the original graph where the information is taken from
@@ -125,6 +129,59 @@ public class Utilities {
                 i++;
             }
         }
+    }
+
+
+    public void specifyClusters(Node source,int count, String identifier) {
+        Iterator<? extends Node> k = source.getDepthFirstIterator();
+
+        while (k.hasNext()) {
+            Node next = k.next();
+            if (next.getId().contains(identifier) && next.getAttribute("cluster") == null) {
+                next.setAttribute("cluster", "found"+count);
+                next.setAttribute("ui.class","found"+count);
+                System.out.println(next.getId() + " --- " + next.getAttribute("cluster").toString());
+            }
+            //count++;
+        }
+    }
+
+    public void dfsClustering(Node source,int count ,String identifier){
+        if (source.getId().contains(identifier) && source.getAttribute("cluster") == null) {
+            source.setAttribute("cluster","found"+count);
+            System.out.print(source.getId() + " (" + source.getAttribute("cluster")+") " );
+            for (Edge e : source.getEachEdge()) {
+                if (!e.getId().contains("ABL")) {
+                    Node target;
+                    if (e.getSourceNode() == source)
+                        target = e.getTargetNode();
+                    else
+                        target = e.getSourceNode();
+                        dfsClustering(target, count, identifier);
+                }
+            }
+        }
+    }
+
+    protected void removeSpecificAttribute(Graph graph, String attr){
+        graph.removeAttribute(attr);
+    }
+
+    /**
+     * Searches the ABL link, connecting subnetwork A to subnetwork B
+     * @param node The initial Node where the ABL link is connected to
+     * @return returns the ABL edge
+     */
+    protected Edge getABL(Node node){
+        Edge tmp = null;
+        for (Edge e:node.getEachEdge()){
+            if (e != null && e.getId().contains("ABL")){
+                tmp = e;
+            }
+        }
+        if (tmp == null)
+            System.out.println("error");
+        return tmp;
     }
 
 }
