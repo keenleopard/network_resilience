@@ -9,7 +9,7 @@ from classes import InterRR
 from classes import InterER
 
 def main(choice = 'ER'):
-    N = 40
+    N = 4000
     k = 4
 
     with open('frac_lmcc' + choice + '.dat', 'w') as f:

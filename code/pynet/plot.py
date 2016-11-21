@@ -1,11 +1,11 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-data_n4000 = np.loadtxt('frac_lmccER.dat')
+data_n4000 = np.loadtxt('frac_lmccsf.dat')
 #data_n64000 = np.loadtxt('N64000.dat')
 
 #plt.subplot(2, 1, 1)
-plt.plot(data_n4000[:,0], data_n4000[:,1], '.',  label='N = 4,000, avg = 10')
+plt.plot(data_n4000[:,0], data_n4000[:,1], '.',  label='N = 40,')
 plt.ylabel(r'$n_\infty$')
 plt.legend(loc=2)
 
