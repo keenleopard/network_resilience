@@ -4,6 +4,7 @@ import networkx as nx
 import numpy as np
 import matplotlib.pyplot as plt
 import random
+import operator
 
 class InterER(nx.Graph):
 
@@ -18,14 +19,81 @@ class InterER(nx.Graph):
 
         pa = ka / n
         pb = kb / n
-
         self.Ga = nx.fast_gnp_random_graph(n, pa)
         self.Gb = nx.fast_gnp_random_graph(n, pb)
+
+
+        #degreeListA = self.getAscendingDegreeMap(self.Ga)
+        #degreeListB = self.getAscendingDegreeMap(self.Gb)
+        #print(self.getAscendingBetweennessCentralityMap(self.Ga))
+
+        #self.lowToLow(degreeListA,degreeListB)
+        #self.highToHigh(degreeListA,degreeListB)
+        #self.highToLow(degreeListA,degreeListB)
+
+
         #self.Ga = nx.path_graph(n)
         #self.Gb = nx.path_graph(n)
 
         nx.Graph.__init__(self, nx.disjoint_union(self.Ga, self.Gb))
 
+
+    def getAscendingClosenessCentralityMap(self,graph):
+        """
+        returns an ascending list of nodes with their corresponding Closeness Centrality, sorted by the degree: [node:normalized centrality]
+        The Closeness Centrality of a node is the measure of "centrality" in the network, it is the sum of the length of the shortest paths between the given
+        node and all the other nodes. The more central a node is, the closer it is to all the other nodes. (Wikipedia)
+        """
+        deegreeDictionary = nx.closeness_centrality(graph,normalized=True)
+        degreeList = sorted(deegreeDictionary.items(), key=operator.itemgetter(1)) 
+        return degreeList
+
+    def getAscendingBetweennessCentralityMap(self,graph):
+        """
+        returns an ascending list of nodes with their corresponding Betweenness Centrality, sorted by the degree: [node:normalized centrality]
+        The Betweenness Centrality of a node is the measure of "centrality" in the network, it is the nbr. of the shortest paths from all nodes to
+        all the others, passing trough a given node. A node with a high betweenness centrality has a large influence on the transfer of items in the network
+        (Wikipedia)
+        """
+        deegreeDictionary = nx.betweenness_centrality(graph,normalized=True)
+        degreeList = sorted(deegreeDictionary.items(), key=operator.itemgetter(1)) 
+        return degreeList
+
+    def getAscendingDegreeMap(self,graph):
+        """
+        returns an ascending list of nodes with their corresponding degree, sorted by the degree: [node:degree]
+        """
+        #get all the degrees of every node in a dictionary as {node : degree}
+        deegreeDictionary = graph.degree()
+        #sort the dictionary in ascending order based on the degree, and save in a list as [node:degree]
+        degreeList = sorted(deegreeDictionary.items(), key=operator.itemgetter(1)) 
+        return degreeList
+
+
+    def lowToLow(self,listA,listB):
+        """
+        Connects the lowest degree to the lowest degree of the two graphs
+        list: [node:degree]
+        """
+        for x in range(self.n):
+            self.add_edge(listA[x][0],listB[x][0]+self.n) #graphB nodes have an offset of n
+   
+    def highToHigh(self,listA,listB):
+        """
+        Connects the highest degree to the highest degree of the two graphs
+        list: [node:degree]
+        """
+        for x in range(self.n-1,-1,-1):
+            self.add_edge(listA[x][0],listB[x][0]+self.n) #graphB nodes have an offset of n
+
+
+    def highToLow(self,listA,listB):
+        """
+        Connects the highest degree of Network A to the lowest degree of Netowrk B
+        list: [node:degree]
+        """
+        for x in range(self.n-1,-1,-1):
+            self.add_edge(listA[x][0],listB[self.n-x-1][0]+self.n) #graphB nodes have an offset of n
 
     def one2one (self):
         """
