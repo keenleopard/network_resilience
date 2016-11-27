@@ -5,6 +5,17 @@ import numpy as np
 import matplotlib.pyplot as plt
 import random
 from .inter_network import Inter_Network
+
+def generate(n, lam) :
+    s=nx.utils.powerlaw_sequence(n, lam)
+    ratio = 4.5 / np.mean(s)
+    for i in range(len(s)) :
+        s[i] = int(ratio * s[i])
+    if sum(s) % 2 != 0 :
+        s = np.append(s, [1])
+        #print(s)
+    return s
+
 def scale_free_powerlaw(n = 4000, lam = 3, k_avg = 4) :
     """
     n : number of nodes
@@ -14,7 +25,7 @@ def scale_free_powerlaw(n = 4000, lam = 3, k_avg = 4) :
     standard = k_avg + 0.5
     
     while (1) :
-        s = nx.utils.powerlaw_sequence(n, lam)
+        s = generate(n, lam)
         ratio = standard / np.mean(s)
         for i in range(len(s)) :
             s[i] = int(ratio * s[i])

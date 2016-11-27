@@ -124,8 +124,12 @@ class Inter_Network(nx.Graph):
                         #break # as long as there is one out of the cluster, break the loop
             
             for edge in self.Gb.edges(): # choose one edge in B
-                allowed_neighbors = nx.shortest_path(self.Ga, edge[0]).keys() 
+                #allowed_neighbors = nx.shortest_path(self.Ga, edge[0]).keys() 
                 # find the list of nodes in A that the corresponding node of this B node in A connects to
+                for cluster in self.clusters_a :
+                    if edge[0] in cluster: 
+                        allowed_neighbors = cluster # find the cluster in A that this B node connects to
+                        break
                 if edge[1] not in allowed_neighbors :
                     self.Gb.remove_edge(*edge)        
         elif subnet == 'a':
@@ -140,8 +144,12 @@ class Inter_Network(nx.Graph):
                         #self.Ga.remove_edge(node, neighbor)
                         #break
             for edge in self.Ga.edges(): # choose one edge in A
-                allowed_neighbors = nx.shortest_path(self.Gb, edge[0]).keys()
+                #allowed_neighbors = nx.shortest_path(self.Gb, edge[0]).keys()
                 # find the list of nodes in B that the corresponding node of this A node in B connects to
+                for cluster in self.clusters_b :
+                    if edge[0] in cluster: 
+                        allowed_neighbors = cluster # find the cluster in B that this A node connects to
+                        break
                 if edge[1] not in allowed_neighbors :
                     self.Ga.remove_edge(*edge)
 
