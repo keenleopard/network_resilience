@@ -35,6 +35,5 @@ __pycache__/
 *.synctex.gz(busy)
 *.pdfsync
 
-#self defined
-test/
+## Data
 *.dat
