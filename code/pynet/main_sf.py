@@ -4,13 +4,15 @@ import networkx as nx
 import matplotlib.pyplot as plt
 import numpy as np
 import copy
+import sys
 from classes import Inter_Network
 from classes import InterSF
 from classes import InterRR
 from classes import InterER
 
-def main(choice = '3'):
-    N = 50
+wdir = 'data'
+def main(choice,n):
+    N = int(n)
     k = 4
     if choice == '3' :
         G0 = InterSF(N,k,k,3)
@@ -19,7 +21,10 @@ def main(choice = '3'):
     elif choice == '2.3':
         G0 = InterSF(N,k,k,2.3)
     else : print ("No such choice")
-    with open('frac_lmccSF.dat', 'w') as f:
+
+    G0 = InterSF(N,k,k,2.3)
+
+    with open('{0}/N{1}_choice{2}_SF.dat'.format(wdir, N, choice), 'w') as f:
         f.write('# p\t frac_lmcc_rr\n')
         for p in np.linspace(0.55, 0.7, num=100):
 
@@ -33,4 +38,4 @@ def main(choice = '3'):
 
 
 #if __name__ == "__main__":
-main('3')
+main(sys.argv[1],sys.argv[2])
