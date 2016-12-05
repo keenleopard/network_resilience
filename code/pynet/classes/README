@@ -1,4 +1,4 @@
-**inter_network.py** is contains the base class Inter_Network 
+*inter_network.py* is contains the base class Inter_Network 
 
 inter_er.py contains child class InterER
 
