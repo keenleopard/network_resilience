@@ -24,15 +24,14 @@ def scale_free_powerlaw(n = 4000, lam = 3, k_avg = 4) :
     noftries = 100000
     standard = k_avg + 0.5
     
-    while (1) :
-        s = generate(n, lam)
-        ratio = standard / np.mean(s)
-        for i in range(len(s)) :
-            s[i] = int(ratio * s[i])
-        if (nx.is_valid_degree_sequence(s)) :
-	    #G = nx.configuration_model(s) this would generate a lot of self-loops
-	    G = nx.random_degree_sequence_graph(s, tries = noftries)
-            break
+    s = generate(n, lam)
+    ratio = standard / np.mean(s)
+    for i in range(len(s)) :
+        s[i] = int(ratio * s[i])
+    if (nx.is_valid_degree_sequence(s)) :
+	#G = nx.configuration_model(s) this would generate a lot of self-loops
+	G = nx.random_degree_sequence_graph(s, tries = noftries)
+        #break
     return G
 
 class InterSF(Inter_Network):
