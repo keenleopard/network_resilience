@@ -12,7 +12,7 @@ from classes import InterER
 
 wdir = 'data'
 def main(choice = 'RR'):
-    N = 16000
+    N = 64000
     k_avg = 4
     rep = 10
     if choice == 'RR':

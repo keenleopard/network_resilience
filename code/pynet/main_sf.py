@@ -19,8 +19,8 @@ def main(choice = '3'):
     elif choice == '2.3':
         G0 = InterSF(N,k,k,2.3)
     else : print ("No such choice")
-    with open('frac_lmccSF.dat', 'w') as f:
-        f.write('# p\t frac_lmcc_rr\n')
+    with open('frac_lmccSF'+choice+'.dat', 'w') as f:
+        f.write('# p\t frac_lmcc_sf\n')
         for p in np.linspace(0.55, 0.7, num=100):
 
             to_be_removed = int(N * (1-p))
