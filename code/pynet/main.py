@@ -15,11 +15,13 @@ def main(choice = 'RR'):
     N = 64000
     k_avg = 4
     rep = 10
+
     if choice == 'RR':
         G0 = InterRR(N, k_avg, k_avg)
     elif choice == 'ER':
         G0 = InterER(N, k_avg, k_avg)
     else : print("No such choice")
+
     with open('{0}/N{1}_kavg{2}_rep{3}_ER.dat'.format(wdir, N, k_avg, rep), 'w') as f:
         f.write('# created on %s\n' %time.strftime("%H:%M\t%d/%m/%Y"))
         f.write('# p*<k>\t frac_lmcc\n')
