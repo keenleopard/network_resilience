@@ -6,37 +6,37 @@ import numpy as np
 import copy
 import time
 import sys
+import cProfile
+import re
 from classes import Inter_Network
 from classes import InterSF
 from classes import InterRR
 from classes import InterER
-
+# ER,RR, HH, HL, DEGREE, BETWEENNESS, CLOSENESS, 1000,2000,4000,
 wdir = 'data'
 def main(choice,num):
     N = num
     k_avg = 4
-    rep = 100
+    rep = 2
     if choice == 'RR':
         G0 = InterRR(N, k_avg, k_avg)
     elif choice == 'ER':
         G0 = InterER(N, k_avg, k_avg)
     else : print("No such choice")
-    with open('{0}/N{1}_kavg{2}_rep{3}_choice{4}.dat'.format(wdir, N, k_avg, rep, choice), 'w') as f:
+    with open('{0}/N{1}_kavg{2}_rep{3}_choice{4}_DegreeLow.dat'.format(wdir, N, k_avg, rep, choice), 'w') as f:
         f.write('# created on %s\n' %time.strftime("%H:%M\t%d/%m/%Y"))
         f.write('# p*<k>\t frac_lmcc\n')
         count = 0
-        for p in np.linspace(0.59, 0.625, num=100):# different p same graph
+        for p in np.linspace(0.2, 0.8, num=100):# different p same graph
             count += 1
-            print(count)
+            print('Count: ' + str(count) + ' ' + str(p))
             fraction_list = []
             to_be_removed = int(N * (1-p))
 
             for i in range(rep):
                 G = copy.deepcopy(G0) # same graph
-                #G.one2one()
-                #G.fail(Q=to_be_removed)
-                G.remove_corresp(G.attack_random(Q=to_be_removed))
-                G.cascade()
+                G.remove_corresp(failed_nodes=G.attack_special(to_be_removed, 0), order=2)
+                G.cascade(order = 2)
                 fraction_list.append(G.frac_lmcc)
             f.write(str(round(p*k_avg, 4))
                     #str(p)
@@ -45,5 +45,5 @@ def main(choice,num):
                     + '\n')
 
 if __name__ == "__main__":
-    main(sys.argv[1],int(sys.argv[2]))
 
+    main(sys.argv[1], int(sys.argv[2]))
