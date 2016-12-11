@@ -21,7 +21,7 @@ def scale_free_powerlaw(n = 4000, lam = 3, k_avg = 4) :
     n : number of nodes
     lam : exponent
     """
-    noftries = 10000000
+    noftries = 53687091
     standard = k_avg + 0.5
    
     while(1): 
