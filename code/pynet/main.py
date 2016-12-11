@@ -27,7 +27,7 @@ def main(choice,num):
         f.write('# created on %s\n' %time.strftime("%H:%M\t%d/%m/%Y"))
         f.write('# p*<k>\t frac_lmcc\n')
         count = 0
-        for p in np.linspace(0.2, 0.8, num=100):# different p same graph
+        for p in np.linspace(0.2, 0.85, num=100):# different p same graph
             count += 1
             print('Count: ' + str(count) + ' ' + str(p))
             fraction_list = []
