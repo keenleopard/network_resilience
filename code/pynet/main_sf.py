@@ -10,7 +10,7 @@ from classes import InterRR
 from classes import InterER
 
 def main(choice = '3'):
-    N = 50
+    N = 2000
     k = 4
     if choice == '3' :
         G0 = InterSF(N,k,k,3)
@@ -19,9 +19,9 @@ def main(choice = '3'):
     elif choice == '2.3':
         G0 = InterSF(N,k,k,2.3)
     else : print ("No such choice")
-    with open('frac_lmccSF'+choice+'.dat', 'w') as f:
+    with open('frac_lmccSF'+choice+'_node'+str(N)+'.dat', 'w') as f:
         f.write('# p\t frac_lmcc_sf\n')
-        for p in np.linspace(0.55, 0.7, num=100):
+        for p in np.linspace(0.55, 0.7, num=25):
 
             to_be_removed = int(N * (1-p))
             G = copy.deepcopy(G0) # for each p copy once
