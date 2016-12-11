@@ -100,7 +100,7 @@ class Inter_Network(nx.Graph):
             return False
 
 
-    def stepNew(self,subnet,order=1):
+    def stepNew(self,subnet,order):
         """
         For every node in the selected network, we run the procedure.
         We select the corresponding node in the other network (always available trough 1:1 mapping) trough one of our
@@ -112,29 +112,28 @@ class Inter_Network(nx.Graph):
         """
         worked = False
         if subnet == 'b':
-            if order == 2:
-                for edge in self.Gb.edges():
-                    node_index0 = self.Gb_list.index(edge[0])  # we get the index of the corresponding node
-                    if order == 1:
-                        corresp_node0 = self.Ga_list[node_index0]  # we get the ID of the corresponding node
-                    if order == 2:
-                        corresp_node0 = self.Ga_list[(self.n-1)-node_index0]  # we get the ID of the corresponding node
-                    cluster_id0 = self.getClusterId(self.clusters_a, corresp_node0)  # all the edges have to connect to this cluster
-                    if cluster_id0 == -1:
-                        print("ERROR stepping")
-                        sys.exit(-1)
-                    node_index1 = self.Gb_list.index(edge[1])  # we get the index of the corresponding node
-                    if order == 1:
-                        corresp_node1 = self.Ga_list[node_index1]  # we get the ID of the corresponding node
-                    if order == 2:
-                        corresp_node1 = self.Ga_list[(self.n-1)-node_index1]  # we get the ID of the corresponding node
-                    cluster_id1 = self.getClusterId(self.clusters_a, corresp_node1)  # all the edges have to connect to this cluster
-                    if cluster_id1 == -1:
-                        print("ERROR stepping")
-                        sys.exit(-1)
-                    if cluster_id0 != cluster_id1:
-                        worked = True
-                        self.Gb.remove_edge(*edge)
+            for edge in self.Gb.edges():
+                node_index0 = self.Gb_list.index(edge[0])  # we get the index of the corresponding node
+                if order == 1:
+                    corresp_node0 = self.Ga_list[node_index0]  # we get the ID of the corresponding node
+                if order == 2:
+                    corresp_node0 = self.Ga_list[(self.n-1)-node_index0]  # we get the ID of the corresponding node
+                cluster_id0 = self.getClusterId(self.clusters_a, corresp_node0)  # all the edges have to connect to this cluster
+                if cluster_id0 == -1:
+                    print("ERROR stepping")
+                    sys.exit(-1)
+                node_index1 = self.Gb_list.index(edge[1])  # we get the index of the corresponding node
+                if order == 1:
+                    corresp_node1 = self.Ga_list[node_index1]  # we get the ID of the corresponding node
+                if order == 2:
+                    corresp_node1 = self.Ga_list[(self.n-1)-node_index1]  # we get the ID of the corresponding node
+                cluster_id1 = self.getClusterId(self.clusters_a, corresp_node1)  # all the edges have to connect to this cluster
+                if cluster_id1 == -1:
+                    print("ERROR stepping")
+                    sys.exit(-1)
+                if cluster_id0 != cluster_id1:
+                    worked = True
+                    self.Gb.remove_edge(*edge)
 
         if subnet == 'a':
                 for edge in self.Ga.edges():
