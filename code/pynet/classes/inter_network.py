@@ -21,7 +21,7 @@ class Inter_Network(nx.Graph):
         self.n = n
         self.ka = ka
         self.kb = kb
-        
+
         self.Ga = nx.empty_graph(n)
         self.Gb = nx.empty_graph(n)
 
@@ -112,28 +112,29 @@ class Inter_Network(nx.Graph):
         """
         worked = False
         if subnet == 'b':
-            for edge in self.Gb.edges():
-                node_index0 = self.Gb_list.index(edge[0])  # we get the index of the corresponding node
-                if order == 1:
-                    corresp_node0 = self.Ga_list[node_index0]  # we get the ID of the corresponding node
-                if order == 2:
-                    corresp_node0 = self.Ga_list[(self.n-1)-node_index0]  # we get the ID of the corresponding node
-                cluster_id0 = self.getClusterId(self.clusters_a, corresp_node0)  # all the edges have to connect to this cluster
-                if cluster_id0 == -1:
-                    print("ERROR stepping")
-                    sys.exit(-1)
-                node_index1 = self.Gb_list.index(edge[1])  # we get the index of the corresponding node
-                if order == 1:
-                    corresp_node1 = self.Ga_list[node_index1]  # we get the ID of the corresponding node
-                if order == 2:
-                    corresp_node1 = self.Ga_list[(self.n-1)-node_index1]  # we get the ID of the corresponding node
-                cluster_id1 = self.getClusterId(self.clusters_a, corresp_node1)  # all the edges have to connect to this cluster
-                if cluster_id1 == -1:
-                    print("ERROR stepping")
-                    sys.exit(-1)
-                if cluster_id0 != cluster_id1:
-                    worked = True
-                    self.Gb.remove_edge(*edge)
+
+                for edge in self.Gb.edges():
+                    node_index0 = self.Gb_list.index(edge[0])  # we get the index of the corresponding node
+                    if order == 1:
+                        corresp_node0 = self.Ga_list[node_index0]  # we get the ID of the corresponding node
+                    if order == 2:
+                        corresp_node0 = self.Ga_list[(self.n-1)-node_index0]  # we get the ID of the corresponding node
+                    cluster_id0 = self.getClusterId(self.clusters_a, corresp_node0)  # all the edges have to connect to this cluster
+                    if cluster_id0 == -1:
+                        print("ERROR stepping")
+                        sys.exit(-1)
+                    node_index1 = self.Gb_list.index(edge[1])  # we get the index of the corresponding node
+                    if order == 1:
+                        corresp_node1 = self.Ga_list[node_index1]  # we get the ID of the corresponding node
+                    if order == 2:
+                        corresp_node1 = self.Ga_list[(self.n-1)-node_index1]  # we get the ID of the corresponding node
+                    cluster_id1 = self.getClusterId(self.clusters_a, corresp_node1)  # all the edges have to connect to this cluster
+                    if cluster_id1 == -1:
+                        print("ERROR stepping")
+                        sys.exit(-1)
+                    if cluster_id0 != cluster_id1:
+                        worked = True
+                        self.Gb.remove_edge(*edge)
 
         if subnet == 'a':
                 for edge in self.Ga.edges():
@@ -184,13 +185,8 @@ class Inter_Network(nx.Graph):
         deletedB = True
         while (deletedA or deletedB):
             buffer = self.is_mutually_connected
-            #print(self.clusters_a)
-            #print(self.clusters_b)
             deletedA = self.stepNew('a',order)
             deletedB = self.stepNew('b',order)
-
-
-
 
     def getAscendingDegreeMap(self, g):
         """
@@ -209,7 +205,7 @@ class Inter_Network(nx.Graph):
         node and all the other nodes. The more central a node is, the closer it is to all the other nodes. (Wikipedia)
         """
         deegreeDictionary = nx.closeness_centrality(graph,normalized=True)
-        degreeList = sorted(deegreeDictionary.items(), key=operator.itemgetter(1))  
+        degreeList = sorted(deegreeDictionary.items(), key=operator.itemgetter(1))
         return [l[0] for l in degreeList]
 
     def getAscendingBetweennessCentralityMap(self,graph):
@@ -220,7 +216,7 @@ class Inter_Network(nx.Graph):
         (Wikipedia)
         """
         deegreeDictionary = nx.betweenness_centrality(graph,normalized=True)
-        degreeList = sorted(deegreeDictionary.items(), key=operator.itemgetter(1)) 
+        degreeList = sorted(deegreeDictionary.items(), key=operator.itemgetter(1))
         return [l[0] for l in degreeList]
 
     @property
