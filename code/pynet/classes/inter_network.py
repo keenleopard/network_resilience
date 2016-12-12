@@ -17,14 +17,9 @@ class Inter_Network(nx.Graph):
         self.ka = ka
         self.kb = kb
 
-        #pa = ka / n
-        #pb = kb / n
-
-        #self.Ga = nx.fast_gnp_random_graph(n, pa)
-        #self.Gb = nx.fast_gnp_random_graph(n, pb)
         self.Ga = nx.empty_graph(n)
         self.Gb = nx.empty_graph(n)
-        
+
         #nx.Graph.__init__(self, nx.disjoint_union(self.Ga, self.Gb)) // not really have the connected big graph
 
 
@@ -46,7 +41,7 @@ class Inter_Network(nx.Graph):
             if subnet == 'b':
                 #self.remove_nodes_from(nodelist + self.n)
                 self.Gb.remove_nodes_from(nodelist)
-                
+
     def attack_random (self, subnet='a', Q=1):
         """
         remove Q nodes in one sub network randomly
@@ -65,7 +60,7 @@ class Inter_Network(nx.Graph):
             #else:
                 #print("error in subnet")
         return failed_nodes
-    
+
     def attack_crucial (self, subnet='a', Q=1):
         """
         remove Q mostly connected nodes in one subnetwork.
@@ -76,13 +71,13 @@ class Inter_Network(nx.Graph):
         attacked_nodes = np.array(descending_order[:Q])
         self.remove(subnet, attacked_nodes)
         return attacked_nodes
-    
+
     def remove_corresp (self, failed_nodes, subnet='a'):
         """
         due to the one to one mapping, remove the correponding nodes of the other subnet
         """
         if subnet == 'a':
-            self.remove('b', failed_nodes) 
+            self.remove('b', failed_nodes)
         elif subnet == 'b':
             self.remove('a', failed_nodes)
         else:
@@ -112,47 +107,21 @@ class Inter_Network(nx.Graph):
         """
         allowed_cluster = None
         if subnet == 'b':
-            #for node in self.Gb.nodes(): # choose one node in B
-                #for cluster in self.clusters_a:
-                    #if (node in cluster): 
-                        #allowed_neighbors = cluster # find the cluster in A that this B node connects to
-                        #break # once found, break the loop
-                #for neighbor in self.Gb.neighbors(node):
-                    #if (neighbor not in allowed_neighbors):
-                        ##self.remove_edge(node+self.n, neighbor+self.n)
-                        #self.Gb.remove_edge(node, neighbor)
-                        #break # as long as there is one out of the cluster, break the loop
-            
             for edge in self.Gb.edges(): # choose one edge in B
-                #allowed_neighbors = nx.shortest_path(self.Ga, edge[0]).keys() 
-                # find the list of nodes in A that the corresponding node of this B node in A connects to
                 for cluster in self.clusters_a :
-                    if edge[0] in cluster: 
+                    if edge[0] in cluster:
                         allowed_neighbors = cluster # find the cluster in A that this B node connects to
                         break
                 if edge[1] not in allowed_neighbors :
-                    self.Gb.remove_edge(*edge)        
+                    self.Gb.remove_edge(*edge)
         elif subnet == 'a':
-            #for node in self.Ga.nodes():
-                #for cluster in self.clusters_b:
-                    #if (node in cluster): 
-                        #allowed_neighbors = cluster
-                        #break
-                #for neighbor in self.Ga.neighbors(node):
-                    #if (neighbor not in allowed_neighbors):
-                        ##self.remove_edge(node, neighbor)
-                        #self.Ga.remove_edge(node, neighbor)
-                        #break
             for edge in self.Ga.edges(): # choose one edge in A
-                #allowed_neighbors = nx.shortest_path(self.Gb, edge[0]).keys()
-                # find the list of nodes in B that the corresponding node of this A node in B connects to
                 for cluster in self.clusters_b :
-                    if edge[0] in cluster: 
+                    if edge[0] in cluster:
                         allowed_neighbors = cluster # find the cluster in B that this A node connects to
                         break
                 if edge[1] not in allowed_neighbors :
                     self.Ga.remove_edge(*edge)
-
         else:
             print("error in step subnet")
 
