@@ -72,6 +72,11 @@ class Inter_Network(nx.Graph):
         Q=1: number of nodes to be removed.
         subnet='a', specify which subnetwork. a/b
         """
+        if subnet == 'a':
+            G = self.Ga
+        elif subset == 'b':
+            G = self.Gb
+        else : print("no such choice of subnetwork")
         descending_order = sorted(G.nodes(), key = lambda i: -G.degree(i)) # getting node list from most degree to least degree
         attacked_nodes = np.array(descending_order[:Q])
         self.remove(subnet, attacked_nodes)

@@ -8,7 +8,7 @@ def group_into_four(data) :
         data_4.append(np.mean(temp, axis = 0))
     return data_4
 
-data = np.genfromtxt('./analysis/avg_sd_ER_1000.dat',delimiter='\t', skip_header=True)
+data = np.genfromtxt('./analysis/avg_sd_1000_kavg4_rep100_choiceER.dat',delimiter='\t', skip_header=True)
 d1 = np.asarray(group_into_four(data))
 plt.plot(d1[:,0], d1[:,1],color='#191970', label='N = 1000')
 
@@ -46,7 +46,7 @@ plt.legend(loc='best')
 plt.xlabel(r'$p$')
 plt.ylabel(r'$P_\infty$')
 '''
-plt.savefig('../../plot/ER_cluster_generated_data_into4.pdf', bbox_inches='tight')
+plt.savefig('../../plot/ER_cluster_generated_data_into4_change1000.pdf', bbox_inches='tight')
 
 
 #plt.show()

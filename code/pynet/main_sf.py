@@ -10,7 +10,7 @@ from classes import InterRR
 from classes import InterER
 
 def main(choice = '3'):
-    N = 50000
+    N = 20
     k = 4
     if choice == '3' :
         G0 = InterSF(N,k,k,3)

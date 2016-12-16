@@ -3,7 +3,8 @@
 from __future__ import division, print_function
 import numpy as np
 data = []
-data.append(np.loadtxt('./data/N1000_kavg4_rep10_choiceER.dat'))
+#data.append(np.loadtxt('./data/N1000_kavg4_rep10_choiceER.dat'))
+data.append(np.loadtxt('./data/N1000_kavg4_rep100_choiceER.dat'))
 data.append(np.loadtxt('./data/N2000_kavg4_rep25_choiceER.dat'))
 data.append(np.loadtxt('./data/N4000_kavg4_rep10_choiceER.dat'))
 data.append(np.loadtxt('./data/N8000_kavg4_rep25_choiceER.dat'))
@@ -18,8 +19,9 @@ for i in range(len(data)):
         #f.write('p\tavg_frac_lmcc\tsd\n')    
         d = data[i]
         for line in range(len(d)):
+            rep = len(d[line])-1
             avg = np.mean(d[line,1:])
-            sd = np.std(d[line,1:])
+            sd_of_mean = np.std(d[line,1:])
             print(line, avg)
             f.write(str(d[line,0])+'\t'+ str(avg)
                 +'\t' + str(sd) + '\n')
