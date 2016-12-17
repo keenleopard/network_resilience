@@ -101,12 +101,12 @@ class Inter_Network(nx.Graph):
 
     def setAutonomousNode(self, autoFrac=0., method="random"):
         """
-        select autonomous nodes.
+        set autonomous nodes.
         """
         autoNum = int(self.n * autoFrac)
 
         if method == "random":
-            sequence = random.sample(range(self.n), autoNum)
+            self.autoList = random.sample(range(self.n), autoNum)
         elif method == "Adegree":
             pass
         elif method == "Bdegree":
@@ -115,7 +115,9 @@ class Inter_Network(nx.Graph):
             print("Wrong input method.")
 
         for i in range(autoNum):
-            self.remove_edge(sequence[i], sequence[i]+self.n)
+            self.remove_edge(self.autoList[i], self.autoList[i]+self.n)
+
+        return self.autoList
 
 
     def step (self, subnet):
