@@ -23,12 +23,12 @@ class Inter_Network(nx.Graph):
         #nx.Graph.__init__(self, nx.disjoint_union(self.Ga, self.Gb)) // not really have the connected big graph
 
 
-    #def one2one (self):
-        #"""
-        #one to one connection between two sub networks.
-        #"""
-        #for i in range(self.n):
-            #self.add_edge(i, self.n+i)
+    def one2one (self):
+        """
+        one to one connection between two sub networks.
+        """
+        for i in range(self.n):
+            self.add_edge(i, self.n+i)
 
     def remove(self, subnet='a', nodelist=None):
         """
@@ -52,7 +52,7 @@ class Inter_Network(nx.Graph):
             print("error in removed number of nodes")
         else:
             failed_nodes = np.array(random.sample(range(self.n), Q))
-            self.remove(subnet, failed_nodes) # remove the failed nodes of the selected subnet
+            self.remove(subnet, failed_nodes)
             #if subnet == 'a':
                 #self.remove('b', failed_nodes) # due to the one to one mapping, remove the correponding nodes of the other subnet
             #elif subnet == 'b':
