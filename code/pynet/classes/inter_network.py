@@ -99,6 +99,25 @@ class Inter_Network(nx.Graph):
         else:
             return False
 
+    def setAutonomousNode(self, autoFrac=0., method="random"):
+        """
+        select autonomous nodes.
+        """
+        autoNum = int(self.n * autoFrac)
+
+        if method == "random":
+            sequence = random.sample(range(self.n), autoNum)
+        elif method == "Adegree":
+            pass
+        elif method == "Bdegree":
+            pass
+        else:
+            print("Wrong input method.")
+
+        for i in range(autoNum):
+            self.remove_edge(sequence[i], sequence[i]+self.n)
+
+
     def step (self, subnet):
         """
         Each step in cascading failure.
