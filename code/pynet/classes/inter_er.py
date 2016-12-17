@@ -23,7 +23,8 @@ class InterER(Inter_Network):
         self.Ga = nx.fast_gnp_random_graph(n, pa)
         self.Gb = nx.fast_gnp_random_graph(n, pb)
 
+        self.autoList = []
+
         nx.Graph.__init__(self, nx.disjoint_union(self.Ga, self.Gb))
-        #nx.Graph.__init__(self, nx.disjoint_union(self.Ga, self.Gb)) // not really have the connected big graph
 
 
