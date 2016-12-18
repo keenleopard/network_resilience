@@ -20,6 +20,8 @@ class Inter_Network(nx.Graph):
         self.Ga = nx.empty_graph(n)
         self.Gb = nx.empty_graph(n)
 
+        self.autoList = []
+
         #nx.Graph.__init__(self, nx.disjoint_union(self.Ga, self.Gb)) // not really have the connected big graph
 
 
@@ -77,6 +79,21 @@ class Inter_Network(nx.Graph):
         else:
             print("error in subnet")
 
+    def remove_corresp_auto (self, failed_nodes, subnet='a'):
+        """
+        initial attack in the corresponding network, in presence of autonomous nodes.
+        """
+        if subnet == 'a':
+            for node in failed_nodes:
+                if node not in self.autoList:
+                    self.G.remove(node+self.n)
+                    self.Gb.remove(node)
+        if subnet == 'b':
+            for node in failed_nodes:
+                if node not in self.autoList:
+                    self.G.remove(node)
+                    self.Ga.remove(node)
+
     @property
     def is_mutually_connected (self):
         """
@@ -100,11 +117,19 @@ class Inter_Network(nx.Graph):
         autoNum = int(self.n * autoFrac)
 
         if method == "random":
-            self.autoList = random.sample(range(self.n), autoNum)
+            self.autoList = random.sample(2*range(self.n), autoNum)
         elif method == "Adegree":
-            pass
+            a_nodes_descending = sorted(G.Ga.nodes(),
+                                    key = lambda i: -G.Ga.degree(i))
+            self.autoList = a_nodes_descending[:autoNum]
         elif method == "Bdegree":
-            pass
+            b_nodes_descending = sorted(G.Ga.nodes(),
+                                    key = lambda i: -G.Ga.degree(i))
+            self.autoList = b_nodes_descending[:autoNum]
+        elif method == "ABdegree":
+            nodes_descending = sorted(G.nodes(), key = lambda i: -G.degree(i))
+            self.autoList = nodes_descending[:autoNum]
+
         else:
             print("Wrong input method.")
 
@@ -121,7 +146,7 @@ class Inter_Network(nx.Graph):
         in the other subnet.
 
         """
-        allowed_cluster = None
+        allowed_neighbors = []
         if subnet == 'b':
             for edge in self.Gb.edges():
                 for cluster in self.clusters_a :
@@ -140,14 +165,6 @@ class Inter_Network(nx.Graph):
                     self.Ga.remove_edge(*edge)
         else:
             print("error in step subnet")
-
-
-    def stepAuto (self, subnet):
-        """
-        step method in presence of autonomous nodes.
-        """
-        if subnet == 'b':
-            pass
 
 
     def cascade (self, init_subnet='a', auto=False):
