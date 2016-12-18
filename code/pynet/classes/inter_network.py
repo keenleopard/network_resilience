@@ -53,12 +53,6 @@ class Inter_Network(nx.Graph):
         else:
             failed_nodes = np.array(random.sample(range(self.n), Q))
             self.remove(subnet, failed_nodes)
-            #if subnet == 'a':
-                #self.remove('b', failed_nodes) # due to the one to one mapping, remove the correponding nodes of the other subnet
-            #elif subnet == 'b':
-                #self.remove('a', failed_nodes)
-            #else:
-                #print("error in subnet")
         return failed_nodes
 
     def attack_crucial (self, subnet='a', Q=1):
@@ -125,10 +119,11 @@ class Inter_Network(nx.Graph):
         Each step in cascading failure.
         Remove edges in the subnet connecting nodes in different clusters
         in the other subnet.
+
         """
         allowed_cluster = None
         if subnet == 'b':
-            for edge in self.Gb.edges(): # choose one edge in B
+            for edge in self.Gb.edges():
                 for cluster in self.clusters_a :
                     if edge[0] in cluster:
                         allowed_neighbors = cluster # find the cluster in A that this B node connects to
@@ -147,13 +142,22 @@ class Inter_Network(nx.Graph):
             print("error in step subnet")
 
 
-    def cascade (self, init_subnet='a'):
+    def stepAuto (self, subnet):
+        """
+        step method in presence of autonomous nodes.
+        """
+        if subnet == 'b':
+            pass
+
+
+    def cascade (self, init_subnet='a', auto=False):
         """
         Iterative process for cascading failure. # not contain the initial attack part, only the remove edges part
         During this, even steps are to remove edges in subnet a;
         odd steps are to remove edges in subnet b.
 
         init_subnet: initially failing subnet
+        auto: whether there is autonomous nodes (True/False)
         """
         if init_subnet == 'a':
             count = 1
@@ -163,8 +167,11 @@ class Inter_Network(nx.Graph):
             print("error in initial removal")
 
         while (not self.is_mutually_connected):
-            self.step(chr(97 + (count % 2 != 0))) #even count for a, odd count for b
-            #print(count)
+            subnet = chr(97 + (count % 2 != 0))
+            if auto == False:
+                self.step(subnet) #even count for a, odd count for b
+            elif auto == True:
+                self.stepAuto(subnet)
             count += 1
 
     @property
