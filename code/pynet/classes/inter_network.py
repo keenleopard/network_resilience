@@ -21,6 +21,9 @@ class Inter_Network(nx.Graph):
         self.Gb = nx.empty_graph(n)
 
         self.autoList = []
+        self.autoList_a = []
+        self.autoList_b = []
+        self.auto = False
 
         #nx.Graph.__init__(self, nx.disjoint_union(self.Ga, self.Gb)) // not really have the connected big graph
 
@@ -34,15 +37,17 @@ class Inter_Network(nx.Graph):
 
     def remove(self, subnet='a', nodelist=None):
         """
-        Remove node list in subnet a or b
+        Remove node list in subnet a or b,
+        in the presence of Autonomous Nodes.
         """
         if nodelist is not None:
-            if subnet == 'a':
-                #self.remove_nodes_from(nodelist)
-                self.Ga.remove_nodes_from(nodelist)
-            if subnet == 'b':
-                #self.remove_nodes_from(nodelist + self.n)
-                self.Gb.remove_nodes_from(nodelist)
+            for node in nodelist:
+                if subnet == 'a':
+                    if node not in self.autoList:
+                        self.Ga.remove_node(node)
+                if subnet == 'b':
+                    if node not in np.array(self.autoList)-self.n:
+                        self.Gb.remove_node(node)
 
     def attack_random (self, subnet='a', Q=1):
         """
@@ -86,13 +91,11 @@ class Inter_Network(nx.Graph):
         if subnet == 'a':
             for node in failed_nodes:
                 if node not in self.autoList:
-                    self.G.remove(node+self.n)
-                    self.Gb.remove(node)
+                    self.Gb.remove_node(node)
         if subnet == 'b':
             for node in failed_nodes:
-                if node not in self.autoList:
-                    self.G.remove(node)
-                    self.Ga.remove(node)
+                if node not in np.array(self.autoList) - self.n:
+                    self.Ga.remove_node(node)
 
     @property
     def is_mutually_connected (self):
@@ -103,6 +106,11 @@ class Inter_Network(nx.Graph):
         #Gb_nodes = np.array(self.Gb.nodes())
         #mapping = dict(zip(Gb_nodes, Gb_nodes - self.n))
         #Gb_copy = nx.relabel_nodes (self.Gb, mapping, copy = True)
+
+        if self.auto is True:
+            self.Ga.remove_nodes_from(self.autoList_a)
+            self.Gb.remove_nodes_from(self.autoList_b)
+
         self.clusters_a = list(nx.connected_components(self.Ga))
         self.clusters_b = list(nx.connected_components(self.Gb))
         if self.clusters_a == self.clusters_b:
@@ -117,7 +125,7 @@ class Inter_Network(nx.Graph):
         autoNum = int(self.n * autoFrac)
 
         if method == "random":
-            self.autoList = random.sample(2*range(self.n), autoNum)
+            self.autoList = random.sample(range(2 * self.n), autoNum)
         elif method == "Adegree":
             a_nodes_descending = sorted(G.Ga.nodes(),
                                     key = lambda i: -G.Ga.degree(i))
@@ -129,12 +137,8 @@ class Inter_Network(nx.Graph):
         elif method == "ABdegree":
             nodes_descending = sorted(G.nodes(), key = lambda i: -G.degree(i))
             self.autoList = nodes_descending[:autoNum]
-
         else:
             print("Wrong input method.")
-
-        for i in range(autoNum):
-            self.remove_edge(self.autoList[i], self.autoList[i]+self.n)
 
         return self.autoList
 
@@ -167,12 +171,11 @@ class Inter_Network(nx.Graph):
             print("error in step subnet")
 
 
-    def cascade (self, init_subnet='a', auto=False):
+    def cascade (self, init_subnet='a'):
         """
         Iterative process for cascading failure. # not contain the initial attack part, only the remove edges part
         During this, even steps are to remove edges in subnet a;
         odd steps are to remove edges in subnet b.
-
         init_subnet: initially failing subnet
         auto: whether there is autonomous nodes (True/False)
         """
@@ -185,11 +188,13 @@ class Inter_Network(nx.Graph):
 
         while (not self.is_mutually_connected):
             subnet = chr(97 + (count % 2 != 0))
-            if auto == False:
-                self.step(subnet) #even count for a, odd count for b
-            elif auto == True:
-                self.stepAuto(subnet)
+            self.step(subnet)
+            #if auto == False:
+            #    self.step(subnet) #even count for a, odd count for b
+            #elif auto == True:
+            #    self.stepAuto(subnet)
             count += 1
+            print(len(self.Ga.edges()), " ", len(self.Gb.edges()) )
 
     @property
     def frac_lmcc(self):
