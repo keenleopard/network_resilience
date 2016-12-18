@@ -24,7 +24,10 @@ class InterER(Inter_Network):
         self.Gb = nx.fast_gnp_random_graph(n, pb)
 
         self.autoList = []
+        self.autoList_a = []
+        self.autoList_b = []
+        self.auto = False
 
-        nx.Graph.__init__(self, nx.disjoint_union(self.Ga, self.Gb))
+        #nx.Graph.__init__(self, nx.disjoint_union(self.Ga, self.Gb))
 
 
