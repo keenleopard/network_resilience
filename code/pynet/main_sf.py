@@ -1,14 +1,11 @@
 from __future__ import division, print_function
 
-import networkx as nx
-import matplotlib.pyplot as plt
+
 import numpy as np
 import copy
 import sys
-from classes import Inter_Network
 from classes import InterSF
-from classes import InterRR
-from classes import InterER
+
 
 wdir = 'data'
 def main(choice,n):
@@ -30,10 +27,8 @@ def main(choice,n):
 
             to_be_removed = int(N * (1-p))
             G = copy.deepcopy(G0) # for each p copy once
-            # initial attack subnetwork a
             G.remove_corresp(G.attack_random(Q=to_be_removed))
             G.cascade()
-            #print(nx.number_of_nodes(G.Ga))
             f.write(str(p) + '\t{0.frac_lmcc}\n'.format(G))
 
 

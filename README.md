@@ -4,12 +4,6 @@
 > * Group participants names: Thierry Backes, Sichen Li, Peng Zhou
 > * Project Title: Analyzing resilience of interdependent networks
 
-## todos:
-Sichen: 1) finish the figure 3b from Nature, especially the SF interNetworks. 2) start the report for this part. 
-
-Tierry: 1) change type of interconnectivity. 
-
-Peng: 1) Look at how to use cluster for speed. 2) start implementing autonomous nodes. 
 ## General Introduction
 
 With the trend of liberalization of energy market, the integration of energy systems become a more and more important topic. Understanding the resilience of interdependent power grids is thus needed for designing the construction. 

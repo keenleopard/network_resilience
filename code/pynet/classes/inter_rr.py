@@ -17,8 +17,8 @@ class InterRR(Inter_Network):
         self.kb = kb
  
         self.Ga = nx.random_regular_graph(self.ka, self.n)
-	# random_regular_graph(d, n, seed=None) with d (int) as the degree of each node.
+        # random_regular_graph(d, n, seed=None) with d (int) as the degree of each node.
         self.Gb = nx.random_regular_graph(self.kb, self.n)
-        
+
 
 
