@@ -1,12 +1,8 @@
 from __future__ import division, print_function
 
 import networkx as nx
-import numpy as np
-import matplotlib.pyplot as plt
 import random
 import operator
-
-import sys
 
 
 class Inter_Network(nx.Graph):
@@ -14,10 +10,13 @@ class Inter_Network(nx.Graph):
 
     def __init__(self, n, ka, kb):
         """
-        n: number of nodes of each sub network
-        ka, kb: average degree of network a, b
+        :param n: number of nodes of each sub network
+        :param ka: average degree of network a
+        :param kb: average degree of network b
+        Ga, Gb: The subnetworks
+        Ga_list, Gb_list: The list of the connected edges
+        cluster_a, cluster_b: The list of the cluster in the subnetworks
         """
-
         self.n = n
         self.ka = ka
         self.kb = kb
@@ -28,28 +27,19 @@ class Inter_Network(nx.Graph):
         self.Ga_list = []
         self.Gb_list = []
 
+        self.clusters_a = []
+        self.clusters_b = []
 
-    def remove(self, subnet='a', nodelist=None):
+    def attack_random(self, Q, type):
         """
-        Remove node list in subnet a or b
-        """
-        if nodelist is not None:
-            if subnet == 'a':
-                self.Ga.remove_nodes_from(nodelist)
-            if subnet == 'b':
-                self.Gb.remove_nodes_from(nodelist)
-
-    def attack_special(self, Q,type):
-        """
-        Creates the specific mapping scheme. Either Degree, Betweenness Centrality, or Closeness Centrality. Then it creates the coupling between
-        Ga and Gb, either high to high, or high to low
+        Creates the specific mapping scheme. Either Degree, Betweenness Centrality, Closeness Centrality, or Random.
         :param Q: The fraction of nodes to remove
         :param type: 0: Degree, 1: Betweenness Centrality, 2: Closeness Centrality
         :param order: 0: High to High 1: High to Low
         :return: The list of failed nodes
         """
         if Q > self.n:
-            print("error in removed number of nodes")
+            raise Exception("Value of nodes to remove is larger than nodes in the network!")
         else:
             if type == 0:
                 self.Ga_list = self.getAscendingDegreeMap(self.Ga)
@@ -60,25 +50,32 @@ class Inter_Network(nx.Graph):
             elif type == 2:
                 self.Ga_list = self.getAscendingClosenessCentralityMap(self.Ga)
                 self.Gb_list = self.getAscendingClosenessCentralityMap(self.Gb)
+            elif type == 3:
+                self.Ga_list = range(0, self.n)
+                self.Gb_list = range(0, self.n)
             else:
-                raise Exception("Wrong type given! Expected 0,1,2 given: " + str(type))
+                raise Exception("Wrong type given! Expected 0,1,2,3 given: " + str(type))
 
             failed_nodes = random.sample(range(self.n), Q)
             return failed_nodes
-    
-    def remove_corresp (self, failed_nodes,order, subnet='a'):
+
+    def remove_corresp(self, failed_nodes, order):
         """
-        due to the one to one mapping, remove the correponding nodes of the other subnet
+        Due to the strong one-to-one mapping, we remove the nodes from failed_nodes and their counterparts, which
+        are specified in the Ga/Gb_list
+        :param failed_nodes: The list of nodes to fail (only in one subnetwork. The counterparts are looked up)
+        :param order: The connectivity model. 0 : High-to-High, 1 is High-to-Low
+        :return: none
+        We remove a node of the list in network A, and the look up for it's counterpart: We check in the list of nodes
+        of network A, at which index it is, and then delete the node at the same (or n-index, for High-to-Low)  index
+        from the network B.
         """
-        if order == 1:
+        if order == 0:
             for x in failed_nodes:
-                "We want to delete items from failed_nodes. Therefore, we check in Ga_list to get the index, at which "\
-                    "position this node is in the A subnetwork based on the degree or centrality values.Then we delete"\
-                    "this position in network B,by adding n nodes to the index, and finally delete the failed node"
                 index = self.Ga_list.index(x)
                 self.Gb.remove_node(self.Gb_list[index])
                 self.Ga.remove_node(x)
-        elif order == 2:
+        elif order == 1:
             for x in failed_nodes:
                 index = self.Ga_list.index(x)
                 self.Gb.remove_node(self.Gb_list[(self.n-1)-index])
@@ -86,21 +83,17 @@ class Inter_Network(nx.Graph):
         else:
             raise Exception("Wrong order given! Expected 0 or 1 given: " + str(order))
 
-    @property
-    def is_mutually_connected (self):
+    def generate_mcc(self):
         """
-        check if the whole network is mutually connected,
-        i.e. A clusters are isomorphic to B clusters.
+        We generate a list containing different sets of unique nodes. Each set corresponds to one mutually connected
+        cluster in the given sub-network. This is easily done, because we don't have a "real edge" combining the two
+        networks, but look up their counterparts in the lists.
+        :return: none
         """
         self.clusters_a = list(nx.connected_components(self.Ga))
         self.clusters_b = list(nx.connected_components(self.Gb))
-        if self.clusters_a == self.clusters_b:
-            return True
-        else:
-            return False
 
-
-    def stepNew(self,subnet,order):
+    def step(self, subnet, order):
         """
         For every node in the selected network, we run the procedure.
         We select the corresponding node in the other network (always available trough 1:1 mapping) trough one of our
@@ -115,23 +108,22 @@ class Inter_Network(nx.Graph):
 
                 for edge in self.Gb.edges():
                     node_index0 = self.Gb_list.index(edge[0])  # we get the index of the corresponding node
-                    if order == 1:
+                    if order == 0:
                         corresp_node0 = self.Ga_list[node_index0]  # we get the ID of the corresponding node
-                    if order == 2:
+                    if order == 1:
                         corresp_node0 = self.Ga_list[(self.n-1)-node_index0]  # we get the ID of the corresponding node
                     cluster_id0 = self.getClusterId(self.clusters_a, corresp_node0)  # all the edges have to connect to this cluster
                     if cluster_id0 == -1:
-                        print("ERROR stepping")
-                        sys.exit(-1)
+                        raise Exception("Error occurred while stepping.")
                     node_index1 = self.Gb_list.index(edge[1])  # we get the index of the corresponding node
-                    if order == 1:
+                    if order == 0:
                         corresp_node1 = self.Ga_list[node_index1]  # we get the ID of the corresponding node
-                    if order == 2:
+                    if order == 1:
                         corresp_node1 = self.Ga_list[(self.n-1)-node_index1]  # we get the ID of the corresponding node
                     cluster_id1 = self.getClusterId(self.clusters_a, corresp_node1)  # all the edges have to connect to this cluster
                     if cluster_id1 == -1:
-                        print("ERROR stepping")
-                        sys.exit(-1)
+                        raise Exception("Error occurred while stepping.")
+
                     if cluster_id0 != cluster_id1:
                         worked = True
                         self.Gb.remove_edge(*edge)
@@ -139,23 +131,23 @@ class Inter_Network(nx.Graph):
         if subnet == 'a':
                 for edge in self.Ga.edges():
                     node_index0 = self.Ga_list.index(edge[0])  # we get the index of the corresponding node
-                    if order == 1:
+                    if order == 0:
                         corresp_node0 = self.Gb_list[node_index0]  # we get the ID of the corresponding node
-                    if order == 2:
+                    if order == 1:
                         corresp_node0 = self.Gb_list[(self.n-1)-node_index0]  # we get the ID of the corresponding node
                     cluster_id0 = self.getClusterId(self.clusters_b, corresp_node0)  # all the edges have to connect to this cluster
                     if cluster_id0 == -1:
-                        print("ERROR stepping")
-                        sys.exit(-1)
+                        raise Exception("Error occurred while stepping.")
+
                     node_index1 = self.Ga_list.index(edge[1])  # we get the index of the corresponding node
-                    if order == 1:
+                    if order == 0:
                         corresp_node1 = self.Gb_list[node_index1]  # we get the ID of the corresponding node
-                    if order == 2:
+                    if order == 1:
                         corresp_node1 = self.Gb_list[(self.n-1)-node_index1]  # we get the ID of the corresponding node
                     cluster_id1 = self.getClusterId(self.clusters_b, corresp_node1)  # all the edges have to connect to this cluster
                     if cluster_id1 == -1:
-                        print("ERROR stepping")
-                        sys.exit(-1)
+                        raise Exception("Error occurred while stepping.")
+
                     if cluster_id0 != cluster_id1:
                         worked = True
                         self.Ga.remove_edge(*edge)
@@ -173,47 +165,44 @@ class Inter_Network(nx.Graph):
 
         return identifier
 
-    def cascade (self, order):
+    def cascade(self, order):
         """
-        Iterative process for cascading failure. # not contain the initial attack part, only the remove edges part
-        During this, even steps are to remove edges in subnet a;
-        odd steps are to remove edges in subnet b.
-
-        init_subnet: initially failing subnet
+        Iterative process, calls the step function as long as edges get removed
+        :param order: The order of the connection, either HTH or HTL
+        :return: none
         """
-        deletedA = True
-        deletedB = True
-        while (deletedA or deletedB):
-            buffer = self.is_mutually_connected
-            deletedA = self.stepNew('a',order)
-            deletedB = self.stepNew('b',order)
+        deleted_a = True
+        deleted_b = True
+        while deleted_a or deleted_b:
+            self.generate_mcc()
+            deleted_a = self.step('a', order)
+            deleted_b = self.step('b', order)
 
     def getAscendingDegreeMap(self, g):
         """
-        returns an ascending list of nodes with their corresponding degree, sorted by the degree: [node:degree]
+        Generates an ascending list of the degree for every node
+        :param graph: The graph to calculate
+        :return: an ascending list of the degree for every node
         """
-        #get all the degrees of every node in a dictionary as {node : degree}
         deegreeDictionary = g.degree()
-        #sort the dictionary in ascending order based on the degree, and save in a list as [node:degree]
         degreeList = sorted(deegreeDictionary.items(), key=operator.itemgetter(1))
         return [l[0] for l in degreeList]
-    
-    def getAscendingClosenessCentralityMap(self,graph):
+
+    def getAscendingClosenessCentralityMap(self, graph):
         """
-        returns an ascending list of nodes with their corresponding Closeness Centrality, sorted by the degree: [node:normalized centrality]
-        The Closeness Centrality of a node is the measure of "centrality" in the network, it is the sum of the length of the shortest paths between the given
-        node and all the other nodes. The more central a node is, the closer it is to all the other nodes. (Wikipedia)
+        Generates an ascending list of the closeness centrality for every node
+        :param graph: The graph to calculate
+        :return: an ascending list of the closeness centrality for every node
         """
         deegreeDictionary = nx.closeness_centrality(graph,normalized=True)
         degreeList = sorted(deegreeDictionary.items(), key=operator.itemgetter(1))
         return [l[0] for l in degreeList]
 
-    def getAscendingBetweennessCentralityMap(self,graph):
+    def getAscendingBetweennessCentralityMap(self, graph):
         """
-        returns an ascending list of nodes with their corresponding Betweenness Centrality, sorted by the degree: [node:normalized centrality]
-        The Betweenness Centrality of a node is the measure of "centrality" in the network, it is the nbr. of the shortest paths from all nodes to
-        all the others, passing trough a given node. A node with a high betweenness centrality has a large influence on the transfer of items in the network
-        (Wikipedia)
+        Generates an ascending list of the betweenness centrality for every node
+        :param graph: The graph to calculate
+        :return: an ascending list of the betweenness centrality for every node
         """
         deegreeDictionary = nx.betweenness_centrality(graph,normalized=True)
         degreeList = sorted(deegreeDictionary.items(), key=operator.itemgetter(1))
@@ -222,9 +211,10 @@ class Inter_Network(nx.Graph):
     @property
     def frac_lmcc(self):
         """
-        fraction of No. nodes in the Largest Mutually Connected Component (LMCC).
+        Generates the fraction of nodes in the LMCC
+        :return: the fraction of nodes in the LMCC
         """
-        buffer = self.is_mutually_connected
+        self.generate_mcc()
         clusters = sorted(self.clusters_a, key = lambda cluster: -len(cluster))
         fraction = len(clusters[0]) / nx.number_of_nodes(self.Ga)
         return fraction
