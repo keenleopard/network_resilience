@@ -17,8 +17,9 @@ plt.legend(loc=2)
 
 plt.subplot(2, 1, 2)
 #plt.plot(data_n64000[:,0], data_n64000[:,1], 'o-', label='N = 64,000, avg = 1')
-#plt.legend(loc=2)
-plt.errorbar(data[:,0],data[:,1],yerr=data[:,2],xerr=None,linestyle='-')
+
+plt.errorbar(data[:,0],data[:,1],yerr=data[:,2],xerr=None,linestyle='-', label='N=30000, rep=2')
+plt.legend(loc=2)
 plt.xlabel(r'$p$')
 plt.ylabel(r'$P_\infty$')
 plt.savefig('../../plot/N30000_rep2_SF3.png', bbox_inches='tight')

@@ -52,5 +52,10 @@ def main():
                 G.cascade()
                 fraction_list.append(G.frac_lmcc)
             f.write(str(1-p) + '\t{0.frac_lmcc}\n'.format(G))
+            f.write(str(1-p)
+                + '\t'
+                + '\t'.join(str(round(x, 4)) for x in fraction_list)
+                + '\n')
+
 if __name__ == "__main__":
     main()
