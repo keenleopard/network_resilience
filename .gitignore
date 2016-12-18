@@ -37,7 +37,7 @@ __pycache__/
 *.pdfsync
 
 
-*.idea
+*.idea/
 workspace.xml
 
 ## Data
